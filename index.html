@@ -1,152 +1,100 @@
 <!DOCTYPE html>
 <html>
 <head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Absensi Karyawan</title>
+  <meta charset="UTF-8">
+  <title>Dashboard Absensi</title>
+  <style>
+    body {
+      font-family: Arial;
+      background: #f4f6f9;
+      padding: 20px;
+    }
 
-<style>
-body{
-margin:0;
-padding:15px;
-background:#f4f6f9;
-font-family:Arial,sans-serif;
-}
+    .box {
+      max-width: 600px;
+      margin: auto;
+      background: white;
+      padding: 20px;
+      border-radius: 10px;
+    }
 
-.card{
-background:#fff;
-border-radius:15px;
-padding:15px;
-margin-bottom:12px;
-box-shadow:0 2px 10px rgba(0,0,0,.08);
-}
+    input {
+      width: 70%;
+      padding: 10px;
+    }
 
-h1{
-font-size:22px;
-text-align:center;
-margin-bottom:20px;
-}
+    button {
+      padding: 10px;
+      cursor: pointer;
+    }
 
-input{
-width:100%;
-padding:12px;
-margin-bottom:10px;
-border:1px solid #ddd;
-border-radius:10px;
-box-sizing:border-box;
-}
+    .card {
+      margin-top: 15px;
+      padding: 10px;
+      border-left: 5px solid #2196f3;
+      background: #fafafa;
+    }
 
-button{
-width:100%;
-padding:12px;
-border:none;
-border-radius:10px;
-background:#2563eb;
-color:#fff;
-font-size:16px;
-cursor:pointer;
-}
+    .telat {
+      color: red;
+      font-weight: bold;
+    }
 
-.tgl{
-font-weight:bold;
-font-size:17px;
-margin-bottom:8px;
-}
-
-.row{
-margin:4px 0;
-}
-</style>
+    .lembur {
+      color: orange;
+      font-weight: bold;
+    }
+  </style>
 </head>
 
 <body>
 
-<div id="loginBox">
+<div class="box">
 
-<h1>ABSENSI KARYAWAN</h1>
+  <h2>Dashboard Absensi</h2>
 
-<div class="card">
-<input id="nama" placeholder="Nama">
-<input id="pin" type="password" placeholder="PIN">
-<button onclick="login()">LOGIN</button>
+  <input id="nama" placeholder="Masukkan nama">
+  <button onclick="cari()">Cari</button>
+
+  <div id="hasil"></div>
+
 </div>
-
-</div>
-
-<div id="hasil"></div>
 
 <script>
 
-const API =
-"https://script.google.com/macros/s/AKfycbyQrY0plburM7doI2I0A6mGq3_hisHm0w26RbP5VuLorKM7onuxWGgECir_q1-L860c/exec";
+const API = "https://script.google.com/macros/s/XXXXX/exec?action=absen&nama=";
 
-async function login(){
+async function cari() {
+  let nama = document.getElementById("nama").value;
 
-const nama=document.getElementById("nama").value.trim();
-const pin=document.getElementById("pin").value.trim();
+  let res = await fetch(API + nama);
+  let data = await res.json();
 
-const r=await fetch(
-API+
-"?action=login&nama="+
-encodeURIComponent(nama)+
-"&pin="+
-encodeURIComponent(pin)
-);
+  let html = "";
 
-const j=await r.json();
+  data.forEach(d => {
 
-if(!j.success){
-alert("PIN salah");
-return;
+    html += `
+      <div class="card">
+        <b>📅 ${d.tanggal}</b><br>
+        Shift : ${d.shift}<br><br>
+
+        Masuk : ${d.masuk} ${d.status === "TELAT" ? '<span class="telat">❌ TELAT</span>' : '✅'}<br>
+
+        Ist1 : - <br>
+        Kembali1 : - <br>
+        Ist2 : - <br>
+        Kembali2 : - <br>
+
+        Pulang : ${d.pulang} ${d.lembur ? '<span class="lembur">🟡 LEMBUR</span>' : ''}
+      </div>
+    `;
+
+  });
+
+  document.getElementById("hasil").innerHTML = html;
 }
 
-loadAbsen(nama);
-
-}
-
-async function loadAbsen(nama){
-
-document.getElementById("loginBox").style.display="none";
-
-const r=await fetch(
-API+
-"?action=absen&nama="+
-encodeURIComponent(nama)
-);
-
-const data=await r.json();
-
-let html=`<h1>${nama}</h1>`;
-
-data.forEach(x=>{
-
-html+=`
-<div class="card">
-
-<div class="tgl">
-Tanggal ${x.tanggal}
-</div>
-
-<div class="row">Masuk : ${x.masuk||"-"}</div>
-
-${x.ist1?`<div class="row">Istirahat 1 : ${x.ist1}</div>`:""}
-
-${x.kem1?`<div class="row">Kembali 1 : ${x.kem1}</div>`:""}
-
-${x.ist2?`<div class="row">Istirahat 2 : ${x.ist2}</div>`:""}
-
-${x.kem2?`<div class="row">Kembali 2 : ${x.kem2}</div>`:""}
-
-<div class="row">Pulang : ${x.pulang||"-"}</div>
-
-</div>
-`;
-
-});
-
-document.getElementById("hasil").innerHTML=html;
-
-}
 </script>
 
 </body>
