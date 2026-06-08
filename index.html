@@ -18,7 +18,6 @@ body {
   color: white;
   padding: 15px;
   text-align: center;
-  font-size: 18px;
 }
 
 .container {
@@ -44,7 +43,6 @@ button {
   color: white;
   border: none;
   border-radius: 6px;
-  cursor: pointer;
 }
 
 /* CARD */
@@ -56,7 +54,6 @@ button {
   box-shadow: 0 2px 6px rgba(0,0,0,0.1);
 }
 
-/* ROW RAPi */
 .row {
   display: flex;
   justify-content: space-between;
@@ -67,11 +64,6 @@ button {
 
 .label {
   font-weight: bold;
-  color: #444;
-}
-
-.value {
-  color: #000;
 }
 
 .title {
@@ -85,12 +77,12 @@ button {
 
 <body>
 
-<div class="header">Dashboard Absensi Karyawan</div>
+<div class="header">Dashboard Absensi</div>
 
 <div class="container">
 
 <div class="search">
-  <input id="nama" placeholder="Cari nama (contoh: Ayung)">
+  <input id="nama" placeholder="Masukkan nama">
   <button onclick="cari()">Cari</button>
 </div>
 
@@ -100,7 +92,7 @@ button {
 
 <script>
 
-const API = "PASTE_URL_KAMU?action=absen&nama=";
+const API = "PASTE_URL?action=absen&nama=";
 
 async function cari() {
 
@@ -112,9 +104,20 @@ async function cari() {
   try {
 
     const res = await fetch(API + encodeURIComponent(nama));
-    const data = await res.json();
+    const text = await res.text();
 
-    if (!data.length) {
+    console.log("RAW:", text);
+
+    let data;
+
+    try {
+      data = JSON.parse(text);
+    } catch (e) {
+      box.innerHTML = "<b>ERROR JSON:</b><br><pre>" + text + "</pre>";
+      return;
+    }
+
+    if (!Array.isArray(data) || data.length === 0) {
       box.innerHTML = "Tidak ada data";
       return;
     }
@@ -128,40 +131,13 @@ async function cari() {
 
           <div class="title">${d.nama}</div>
 
-          <div class="row">
-            <div class="label">Tanggal</div>
-            <div class="value">${d.tanggal}</div>
-          </div>
-
-          <div class="row">
-            <div class="label">Masuk</div>
-            <div class="value">${d.masuk}</div>
-          </div>
-
-          <div class="row">
-            <div class="label">Istirahat 1</div>
-            <div class="value">${d.ist1}</div>
-          </div>
-
-          <div class="row">
-            <div class="label">Kembali 1</div>
-            <div class="value">${d.kembali1}</div>
-          </div>
-
-          <div class="row">
-            <div class="label">Istirahat 2</div>
-            <div class="value">${d.ist2}</div>
-          </div>
-
-          <div class="row">
-            <div class="label">Kembali 2</div>
-            <div class="value">${d.kembali2}</div>
-          </div>
-
-          <div class="row">
-            <div class="label">Pulang</div>
-            <div class="value">${d.pulang}</div>
-          </div>
+          <div class="row"><div class="label">Tanggal</div><div>${d.tanggal}</div></div>
+          <div class="row"><div class="label">Masuk</div><div>${d.masuk}</div></div>
+          <div class="row"><div class="label">Istirahat 1</div><div>${d.ist1}</div></div>
+          <div class="row"><div class="label">Kembali 1</div><div>${d.kembali1}</div></div>
+          <div class="row"><div class="label">Istirahat 2</div><div>${d.ist2}</div></div>
+          <div class="row"><div class="label">Kembali 2</div><div>${d.kembali2}</div></div>
+          <div class="row"><div class="label">Pulang</div><div>${d.pulang}</div></div>
 
         </div>
       `;
@@ -169,7 +145,7 @@ async function cari() {
     });
 
   } catch (err) {
-    box.innerHTML = "ERROR: " + err;
+    box.innerHTML = "ERROR FETCH: " + err;
   }
 }
 
