@@ -18,29 +18,66 @@ body {
   color: white;
   padding: 15px;
   text-align: center;
+  font-size: 18px;
 }
 
 .container {
   padding: 15px;
 }
 
+.search {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 15px;
+}
+
 input {
-  width: 70%;
+  flex: 1;
   padding: 10px;
+  border: 1px solid #ccc;
+  border-radius: 6px;
 }
 
 button {
-  padding: 10px;
+  padding: 10px 15px;
   background: #1e88e5;
   color: white;
   border: none;
+  border-radius: 6px;
+  cursor: pointer;
 }
 
+/* CARD */
 .card {
   background: white;
-  padding: 10px;
-  margin-top: 10px;
-  border-radius: 8px;
+  padding: 12px;
+  margin-bottom: 12px;
+  border-radius: 10px;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+}
+
+/* ROW RAPi */
+.row {
+  display: flex;
+  justify-content: space-between;
+  padding: 4px 0;
+  border-bottom: 1px solid #eee;
+  font-size: 14px;
+}
+
+.label {
+  font-weight: bold;
+  color: #444;
+}
+
+.value {
+  color: #000;
+}
+
+.title {
+  font-weight: bold;
+  margin-bottom: 8px;
+  color: #1e88e5;
 }
 </style>
 
@@ -48,12 +85,14 @@ button {
 
 <body>
 
-<div class="header">Dashboard Absensi</div>
+<div class="header">Dashboard Absensi Karyawan</div>
 
 <div class="container">
 
-<input id="nama" placeholder="Masukkan nama">
-<button onclick="cari()">Cari</button>
+<div class="search">
+  <input id="nama" placeholder="Cari nama (contoh: Ayung)">
+  <button onclick="cari()">Cari</button>
+</div>
 
 <div id="hasil"></div>
 
@@ -61,7 +100,7 @@ button {
 
 <script>
 
-const API = "https://script.google.com/macros/s/AKfycbyQrY0plburM7doI2I0A6mGq3_hisHm0w26RbP5VuLorKM7onuxWGgECir_q1-L860c/exec?action=absen&nama=";
+const API = "PASTE_URL_KAMU?action=absen&nama=";
 
 async function cari() {
 
@@ -86,12 +125,44 @@ async function cari() {
 
       box.innerHTML += `
         <div class="card">
-          <b>${d.nama}</b><br>
-          TANGGAL: ${d.tanggal}<br>
-          MASUK: ${d.masuk}<br>
-          ISTIRAHAT 1: ${d.ist1}<br>
-          KEMBALI 1: ${d.kembali1}<br>
-          PULANG: ${d.pulang}
+
+          <div class="title">${d.nama}</div>
+
+          <div class="row">
+            <div class="label">Tanggal</div>
+            <div class="value">${d.tanggal}</div>
+          </div>
+
+          <div class="row">
+            <div class="label">Masuk</div>
+            <div class="value">${d.masuk}</div>
+          </div>
+
+          <div class="row">
+            <div class="label">Istirahat 1</div>
+            <div class="value">${d.ist1}</div>
+          </div>
+
+          <div class="row">
+            <div class="label">Kembali 1</div>
+            <div class="value">${d.kembali1}</div>
+          </div>
+
+          <div class="row">
+            <div class="label">Istirahat 2</div>
+            <div class="value">${d.ist2}</div>
+          </div>
+
+          <div class="row">
+            <div class="label">Kembali 2</div>
+            <div class="value">${d.kembali2}</div>
+          </div>
+
+          <div class="row">
+            <div class="label">Pulang</div>
+            <div class="value">${d.pulang}</div>
+          </div>
+
         </div>
       `;
 
