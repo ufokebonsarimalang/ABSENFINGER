@@ -18,80 +18,42 @@ body {
   color: white;
   padding: 15px;
   text-align: center;
-  font-size: 18px;
 }
 
 .container {
   padding: 15px;
 }
 
-.search-box {
-  display: flex;
-  gap: 10px;
-  margin-bottom: 15px;
-}
-
 input {
-  flex: 1;
+  width: 70%;
   padding: 10px;
-  border: 1px solid #ccc;
-  border-radius: 6px;
 }
 
 button {
-  padding: 10px 15px;
-  border: none;
+  padding: 10px;
   background: #1e88e5;
   color: white;
-  border-radius: 6px;
-  cursor: pointer;
+  border: none;
 }
 
 .card {
   background: white;
-  padding: 12px;
-  margin-bottom: 10px;
-  border-radius: 10px;
-  box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+  padding: 10px;
+  margin-top: 10px;
+  border-radius: 8px;
 }
-
-.title {
-  font-weight: bold;
-  margin-bottom: 5px;
-}
-
-.row {
-  display: flex;
-  justify-content: space-between;
-  font-size: 14px;
-  margin: 3px 0;
-}
-
-.badge {
-  padding: 3px 8px;
-  border-radius: 5px;
-  font-size: 12px;
-  color: white;
-}
-
-.ok { background: green; }
-.telat { background: red; }
 </style>
 
 </head>
 
 <body>
 
-<div class="header">
-Dashboard Absensi
-</div>
+<div class="header">Dashboard Absensi</div>
 
 <div class="container">
 
-<div class="search-box">
-  <input type="text" id="nama" placeholder="Masukkan nama (contoh: Ayung)">
-  <button onclick="cari()">Cari</button>
-</div>
+<input id="nama" placeholder="Masukkan nama">
+<button onclick="cari()">Cari</button>
 
 <div id="hasil"></div>
 
@@ -99,48 +61,45 @@ Dashboard Absensi
 
 <script>
 
-const API = "https://script.google.com/macros/s/AKfycbyQrY0plburM7doI2I0A6mGq3_hisHm0w26RbP5VuLorKM7onuxWGgECir_q1-L860c/exec??action=absen&nama=";
+const API = "https://script.google.com/macros/s/AKfycbyQrY0plburM7doI2I0A6mGq3_hisHm0w26RbP5VuLorKM7onuxWGgECir_q1-L860c/exec?action=absen&nama=";
 
 async function cari() {
 
   const nama = document.getElementById("nama").value;
-
-  const res = await fetch(API + nama);
-  const data = await res.json();
-
   const box = document.getElementById("hasil");
-  box.innerHTML = "";
 
-  if (!data.length) {
-    box.innerHTML = "<p>Tidak ada data</p>";
-    return;
-  }
+  box.innerHTML = "Loading...";
 
-  data.forEach(d => {
+  try {
 
-    let statusClass = "ok";
-    if (d.masuk > "09:00") statusClass = "telat";
+    const res = await fetch(API + encodeURIComponent(nama));
+    const data = await res.json();
 
-    box.innerHTML += `
-      <div class="card">
-        <div class="title">${d.nama} - ${d.tanggal}</div>
+    if (!data.length) {
+      box.innerHTML = "Tidak ada data";
+      return;
+    }
 
-        <div class="row"><span>Masuk</span><span>${d.masuk || "-"}</span></div>
-        <div class="row"><span>Ist 1</span><span>${d.ist1 || "-"}</span></div>
-        <div class="row"><span>Kembali 1</span><span>${d.kembali1 || "-"}</span></div>
-        <div class="row"><span>Pulang</span><span>${d.pulang || "-"}</span></div>
+    box.innerHTML = "";
 
-        <div class="row">
-          <span>Status</span>
-          <span class="badge ${statusClass}">
-            ${statusClass.toUpperCase()}
-          </span>
+    data.forEach(d => {
+
+      box.innerHTML += `
+        <div class="card">
+          <b>${d.nama}</b><br>
+          Tanggal: ${d.tanggal}<br>
+          Masuk: ${d.masuk}<br>
+          Ist1: ${d.ist1}<br>
+          Kembali1: ${d.kembali1}<br>
+          Pulang: ${d.pulang}
         </div>
-      </div>
-    `;
+      `;
 
-  });
+    });
 
+  } catch (err) {
+    box.innerHTML = "ERROR: " + err;
+  }
 }
 
 </script>
