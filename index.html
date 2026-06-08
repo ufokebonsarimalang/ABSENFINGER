@@ -18,12 +18,14 @@ body {
   color: white;
   padding: 15px;
   text-align: center;
+  font-size: 18px;
 }
 
 .container {
   padding: 15px;
 }
 
+/* SEARCH */
 .search {
   display: flex;
   gap: 10px;
@@ -54,22 +56,34 @@ button {
   box-shadow: 0 2px 6px rgba(0,0,0,0.1);
 }
 
+/* TITLE */
+.title {
+  font-weight: bold;
+  margin-bottom: 10px;
+  color: #1e88e5;
+}
+
+/* ROW FIX RAPI SEJAJAR */
 .row {
   display: flex;
   justify-content: space-between;
-  padding: 4px 0;
+  padding: 6px 0;
   border-bottom: 1px solid #eee;
   font-size: 14px;
+  gap: 10px;
 }
 
 .label {
   font-weight: bold;
+  color: #444;
+  width: 40%;
 }
 
-.title {
-  font-weight: bold;
-  margin-bottom: 8px;
-  color: #1e88e5;
+.value {
+  width: 60%;
+  text-align: right;
+  color: #000;
+  word-break: break-word;
 }
 </style>
 
@@ -77,12 +91,12 @@ button {
 
 <body>
 
-<div class="header">Dashboard Absensi</div>
+<div class="header">Dashboard Absensi Karyawan</div>
 
 <div class="container">
 
 <div class="search">
-  <input id="nama" placeholder="Masukkan nama">
+  <input id="nama" placeholder="Cari nama (contoh: Ayung)">
   <button onclick="cari()">Cari</button>
 </div>
 
@@ -92,7 +106,7 @@ button {
 
 <script>
 
-const API = "https://script.google.com/macros/s/AKfycbyQrY0plburM7doI2I0A6mGq3_hisHm0w26RbP5VuLorKM7onuxWGgECir_q1-L860c/exec?action=absen&nama=";
+const API = "PASTE_URL_KAMU?action=absen&nama=";
 
 async function cari() {
 
@@ -106,14 +120,12 @@ async function cari() {
     const res = await fetch(API + encodeURIComponent(nama));
     const text = await res.text();
 
-    console.log("RAW:", text);
-
     let data;
 
     try {
       data = JSON.parse(text);
     } catch (e) {
-      box.innerHTML = "<b>ERROR JSON:</b><br><pre>" + text + "</pre>";
+      box.innerHTML = "<b>ERROR RESPONSE:</b><br><pre>" + text + "</pre>";
       return;
     }
 
@@ -131,13 +143,13 @@ async function cari() {
 
           <div class="title">${d.nama}</div>
 
-          <div class="row"><div class="label">Tanggal</div><div>${d.tanggal}</div></div>
-          <div class="row"><div class="label">Masuk</div><div>${d.masuk}</div></div>
-          <div class="row"><div class="label">Istirahat 1</div><div>${d.ist1}</div></div>
-          <div class="row"><div class="label">Kembali 1</div><div>${d.kembali1}</div></div>
-          <div class="row"><div class="label">Istirahat 2</div><div>${d.ist2}</div></div>
-          <div class="row"><div class="label">Kembali 2</div><div>${d.kembali2}</div></div>
-          <div class="row"><div class="label">Pulang</div><div>${d.pulang}</div></div>
+          <div class="row"><div class="label">Tanggal</div><div class="value">${d.tanggal}</div></div>
+          <div class="row"><div class="label">Masuk</div><div class="value">${d.masuk}</div></div>
+          <div class="row"><div class="label">Istirahat 1</div><div class="value">${d.ist1}</div></div>
+          <div class="row"><div class="label">Kembali 1</div><div class="value">${d.kembali1}</div></div>
+          <div class="row"><div class="label">Istirahat 2</div><div class="value">${d.ist2}</div></div>
+          <div class="row"><div class="label">Kembali 2</div><div class="value">${d.kembali2}</div></div>
+          <div class="row"><div class="label">Pulang</div><div class="value">${d.pulang}</div></div>
 
         </div>
       `;
